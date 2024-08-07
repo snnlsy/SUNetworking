@@ -7,13 +7,13 @@
 
 import Foundation
 
-// MARK: - NetworkService
+// MARK: - SUNetworkService
 
 /// Main service for executing network requests.
 open class SUNetworkService {
-    private let urlRequestFactory: URLRequestBuilding
-    private let sessionConfigurator: SessionConfigurable
-    private let responseDecoder: ResponseDecoder
+    private let urlRequestFactory: SUURLRequestBuilding
+    private let sessionConfigurator: SUSessionConfigurable
+    private let responseDecoder: SUResponseDecoder
     private let session: URLSession
 
     /// Initializes a new NetworkService instance.
@@ -22,27 +22,27 @@ open class SUNetworkService {
     ///   - sessionConfigurator: The configurator for URLSessions.
     ///   - responseDecoder: The decoder for network responses.
     public init(
-        sessionConfigurator: SessionConfigurable = SessionConfigurator(),
-        responseDecoder: ResponseDecoder = JSONResponseDecoder()
+        sessionConfigurator: SUSessionConfigurable = SUSessionConfigurator(),
+        responseDecoder: SUResponseDecoder = SUJSONResponseDecoder()
     ) {
-        self.urlRequestFactory = URLRequestBuilder()
+        self.urlRequestFactory = SUURLRequestBuilder()
         self.sessionConfigurator = sessionConfigurator
         self.responseDecoder = responseDecoder
         self.session = URLSession(configuration: sessionConfigurator.createConfiguration())
     }
 }
 
-// MARK: - NetworkServicing Implementation
+// MARK: - SUNetworkServicing Implementation
 
 extension SUNetworkService: SUNetworkServicing {
     /// Executes a network request and returns a decoded response.
     ///
     /// - Parameter request: The URLRequestable object.
-    /// - Returns: A Result containing either the decoded response or a NetworkError.
-    public func execute<T: Decodable>(_ request: URLRequestable) async -> Result<T, NetworkError> {
+    /// - Returns: A Result containing either the decoded response or a SUNetworkError.
+    public func execute<T: Decodable>(_ request: SUURLRequestable) async -> Result<T, SUNetworkError> {
         var retries = 0
         while true {
-            let result: Result<T, NetworkError> = await performRequest(request)
+            let result: Result<T, SUNetworkError> = await performRequest(request)
             switch result {
             case .success(let value):
                 return .success(value)
@@ -62,9 +62,9 @@ extension SUNetworkService: SUNetworkServicing {
 extension SUNetworkService {
     /// Performs a single network request attempt.
     ///
-    /// - Parameter request: The URLRequestable object.
-    /// - Returns: A Result containing either the decoded response or a NetworkError.
-    private func performRequest<T: Decodable>(_ request: URLRequestable) async -> Result<T, NetworkError> {
+    /// - Parameter request: The SUURLRequestable object.
+    /// - Returns: A Result containing either the decoded response or a SUNetworkError.
+    private func performRequest<T: Decodable>(_ request: SUURLRequestable) async -> Result<T, SUNetworkError> {
         let urlRequestResult = urlRequestFactory.createRequest(from: request)
         
         switch urlRequestResult {
@@ -72,7 +72,7 @@ extension SUNetworkService {
             do {
                 let (data, response) = try await session.data(for: urlRequest)
                 guard let httpResponse = response as? HTTPURLResponse else {
-                    return .failure(.invalidResponse(ErrorContext(
+                    return .failure(.invalidResponse(SUErrorContext(
                         userMessage: "Invalid server response",
                         statusCode: nil,
                         errorDescription: "The server response was not an HTTP response"
@@ -93,25 +93,25 @@ extension SUNetworkService {
     /// - Parameters:
     ///   - data: The response data.
     ///   - httpResponse: The HTTP response.
-    /// - Returns: A Result containing either the decoded response or a NetworkError.
-    private func handleResponse<T: Decodable>(data: Data, httpResponse: HTTPURLResponse) -> Result<T, NetworkError> {
+    /// - Returns: A Result containing either the decoded response or a SUNetworkError.
+    private func handleResponse<T: Decodable>(data: Data, httpResponse: HTTPURLResponse) -> Result<T, SUNetworkError> {
         switch httpResponse.statusCode {
         case 200...299:
             return responseDecoder.decode(data)
         case 400...499:
-            return .failure(.clientError(ErrorContext(
+            return .failure(.clientError(SUErrorContext(
                 userMessage: "Request failed",
                 statusCode: httpResponse.statusCode,
                 errorDescription: "The server returned a client error"
             )))
         case 500...599:
-            return .failure(.serverError(ErrorContext(
+            return .failure(.serverError(SUErrorContext(
                 userMessage: "Server error occurred",
                 statusCode: httpResponse.statusCode,
                 errorDescription: "The server returned a server error"
             )))
         default:
-            return .failure(.unexpectedError(ErrorContext(
+            return .failure(.unexpectedError(SUErrorContext(
                 userMessage: "An unexpected error occurred",
                 statusCode: httpResponse.statusCode,
                 errorDescription: "Received an unexpected status code"

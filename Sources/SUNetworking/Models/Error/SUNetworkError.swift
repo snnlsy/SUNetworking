@@ -1,5 +1,5 @@
 //
-//  NetworkError.swift
+//  SUNetworkError.swift
 //  SUNetworking
 //
 //  Created by Sinan Ulusoy on 29.07.2024.
@@ -10,25 +10,25 @@ import Foundation
 // MARK: - Error Handling
 
 /// Represents various network-related errors.
-public enum NetworkError: Error {
+public enum SUNetworkError: Error {
     /// Error for invalid URL.
-    case invalidURL(ErrorContext)
+    case invalidURL(SUErrorContext)
     /// Error during request serialization.
-    case serializationError(ErrorContext)
+    case serializationError(SUErrorContext)
     /// Client-side error (4xx status codes).
-    case clientError(ErrorContext)
+    case clientError(SUErrorContext)
     /// Server-side error (5xx status codes).
-    case serverError(ErrorContext)
+    case serverError(SUErrorContext)
     /// Invalid response from the server.
-    case invalidResponse(ErrorContext)
+    case invalidResponse(SUErrorContext)
     /// Error during response parsing.
-    case parsingError(ErrorContext)
+    case parsingError(SUErrorContext)
     /// Network unavailable error.
-    case networkUnavailable(ErrorContext)
+    case networkUnavailable(SUErrorContext)
     /// Request timeout error.
-    case requestTimeout(ErrorContext)
+    case requestTimeout(SUErrorContext)
     /// General network failure.
     case networkFailed(Error)
     /// Unexpected error.
-    case unexpectedError(ErrorContext)
+    case unexpectedError(SUErrorContext)
 }

@@ -1,5 +1,5 @@
 //
-//  SessionConfigurator.swift
+//  SUSessionConfigurator.swift
 //  SUNetworking
 //
 //  Created by Sinan Ulusoy on 29.07.2024.
@@ -7,10 +7,10 @@
 
 import Foundation
 
-// MARK: - SessionConfigurator
+// MARK: - SUSessionConfigurator
 
-/// Standard implementation of SessionConfigurable.
-open class SessionConfigurator: SessionConfigurable {
+/// Standard implementation of SUSessionConfigurable.
+open class SUSessionConfigurator: SUSessionConfigurable {
     public init() {}
     
     /// Creates a URLSessionConfiguration with default settings.

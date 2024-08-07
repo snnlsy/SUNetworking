@@ -1,5 +1,5 @@
 //
-//  ErrorContext.swift
+//  SUErrorContext.swift
 //  SUNetworking
 //
 //  Created by Sinan Ulusoy on 29.07.2024.
@@ -7,10 +7,10 @@
 
 import Foundation
 
-// MARK: - ErrorContext
+// MARK: - SUErrorContext
 
 /// Provides context for network errors.
-public struct ErrorContext {
+public struct SUErrorContext {
     /// User-friendly error message.
     public let userMessage: String?
     /// HTTP status code associated with the error.

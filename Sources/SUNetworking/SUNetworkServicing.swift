@@ -13,7 +13,7 @@ import Foundation
 public protocol SUNetworkServicing {
     /// Executes a network request and returns a decoded response.
     ///
-    /// - Parameter request: The URLRequestable object.
-    /// - Returns: A Result containing either the decoded response or a NetworkError.
-    func execute<T: Decodable>(_ request: URLRequestable) async -> Result<T, NetworkError>
+    /// - Parameter request: The SUURLRequestable object.
+    /// - Returns: A Result containing either the decoded response or a SUNetworkError.
+    func execute<T: Decodable>(_ request: SUURLRequestable) async -> Result<T, SUNetworkError>
 }

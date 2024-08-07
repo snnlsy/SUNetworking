@@ -1,5 +1,5 @@
 //
-//  RetryConfiguration.swift
+//  SURetryConfiguration.swift
 //  SUNetworking
 //
 //  Created by Sinan Ulusoy on 29.07.2024.
@@ -7,10 +7,10 @@
 
 import Foundation
 
-// MARK: - RetryConfiguration
+// MARK: - SURetryConfiguration
 
 /// Configures the retry behavior for network requests.
-public struct RetryConfiguration {
+public struct SURetryConfiguration {
     /// Maximum number of retry attempts.
     public let maxRetries: Int
     /// Delay between retry attempts.
@@ -18,7 +18,7 @@ public struct RetryConfiguration {
     /// Closure to determine if a retry should be attempted based on the error.
     public let shouldRetry: (Error) -> Bool
     
-    /// Initializes a new RetryConfiguration instance.
+    /// Initializes a new SURetryConfiguration instance.
     ///
     /// - Parameters:
     ///   - maxRetries: Maximum number of retry attempts.

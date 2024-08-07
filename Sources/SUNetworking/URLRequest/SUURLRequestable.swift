@@ -1,5 +1,5 @@
 //
-//  URLRequestable.swift
+//  SUURLRequestable.swift
 //  SUNetworking
 //
 //  Created by Sinan Ulusoy on 29.07.2024.
@@ -7,29 +7,29 @@
 
 import Foundation
 
-// MARK: - URLRequestable
+// MARK: - SUURLRequestable
 
 /// Defines the requirements for objects that can be converted to URLRequests.
-public protocol URLRequestable {
+public protocol SUURLRequestable {
     /// The base URL for the request.
     var baseURL: URL { get }
     /// The path component of the URL.
     var path: String { get }
     /// The HTTP method for the request.
-    var method: HTTPMethod { get }
+    var method: SUHTTPMethod { get }
     /// Optional headers for the request.
     var headers: [String: String]? { get }
     /// Optional parameters for the request.
     var parameters: Encodable? { get }
     /// The encoding type for the request.
-    var encoding: NetworkEncoding { get }
+    var encoding: SUNetworkEncoding { get }
     /// Configuration for request retries.
-    var retryConfig: RetryConfiguration { get }
+    var retryConfig: SURetryConfiguration { get }
 }
 
-public extension URLRequestable {
+public extension SUURLRequestable {
     var headers: [String: String]? { nil }
     var parameters: Encodable? { nil }
-    var encoding: NetworkEncoding { .url }
-    var retryConfig: RetryConfiguration { RetryConfiguration() }
+    var encoding: SUNetworkEncoding { .url }
+    var retryConfig: SURetryConfiguration { SURetryConfiguration() }
 }

@@ -1,5 +1,5 @@
 //
-//  HTTPMethod.swift
+//  SUHTTPMethod.swift
 //  SUNetworking
 //
 //  Created by Sinan Ulusoy on 29.07.2024.
@@ -10,7 +10,7 @@ import Foundation
 // MARK: - HTTP Method
 
 /// Represents HTTP methods for network requests.
-public enum HTTPMethod: String {
+public enum SUHTTPMethod: String {
     /// GET method for retrieving resources.
     case get = "GET"
     /// POST method for submitting data.

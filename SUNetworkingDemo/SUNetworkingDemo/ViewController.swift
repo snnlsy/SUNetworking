@@ -15,8 +15,8 @@ struct User: Codable {
     let completed: Bool
 }
 
-struct ExampleAPIEnvironment: URLRequestable {
-    let method: HTTPMethod = .get
+struct ExampleRequest: SUURLRequestable {
+    let method: SUHTTPMethod = .get
     let path: String = "/todos/1"
     let baseURL: URL = URL(string: "https://jsonplaceholder.typicode.com")!
 }
@@ -25,11 +25,11 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let apiEnvironment = ExampleAPIEnvironment()
+        let req = ExampleRequest()
         let networkService: SUNetworkServicing = SUNetworkService()
         
         Task {
-            let result: Result<User, NetworkError> = await networkService.execute(apiEnvironment)
+            let result: Result<User, SUNetworkError> = await networkService.execute(req)
             
             switch result {
             case .success(let user):

@@ -7,8 +7,7 @@ let package = Package(
     name: "SUNetworking",
     platforms: [
         .iOS(.v13),
-    ], 
-    products: [
+    ], products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
             name: "SUNetworking",
