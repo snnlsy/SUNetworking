@@ -7,6 +7,7 @@
 
 import UIKit
 import SUNetworking
+import Combine
 
 struct User: Codable {
     let userId: Int
@@ -22,22 +23,42 @@ struct ExampleRequest: SUURLRequestable {
 }
 
 class ViewController: UIViewController {
+    let req = ExampleRequest()
+    let networkService: SUNetworkServicing = SUNetworkService()
+    var cancellables = Set<AnyCancellable>()
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        let req = ExampleRequest()
-        let networkService: SUNetworkServicing = SUNetworkService()
-        
+        runTask()
+        runCombine()
+    }
+    
+    func runTask() {
         Task {
             let result: Result<User, SUNetworkError> = await networkService.execute(req)
             
             switch result {
             case .success(let user):
-                print("User fetched successfully:")
-                print("Title: \(user.title)")
+                print("TASK: Request completed successfully")
+                print("TASK: Received response: \(user)")
             case .failure(let error):
-                print("Error fetching user: \(error)")
+                print("TASK: Request failed with error: \(error)")
             }
         }
+    }
+    
+    func runCombine() {
+        networkService.execute(req)
+            .sink(receiveCompletion: { completion in
+                switch completion {
+                case .finished:
+                    print("COMBINE: Request completed successfully")
+                case .failure(let error):
+                    print("COMBINE: Request failed with error: \(error)")
+                }
+            }, receiveValue: { (user: User) in
+                print("COMBINE: Received response: \(user)")
+            })
+            .store(in: &cancellables)
     }
 }

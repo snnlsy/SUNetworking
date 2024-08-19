@@ -31,4 +31,8 @@ public enum SUNetworkError: Error {
     case networkFailed(Error)
     /// Unexpected error.
     case unexpectedError(SUErrorContext)
+    /// Error when maximum number of retries is exceeded.
+    case maxRetriesExceeded(SUErrorContext)
+    /// Error when retry operation fails.
+    case retryFailed(SUErrorContext)
 }

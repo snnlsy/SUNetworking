@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 // MARK: - SUNetworkService
 
@@ -35,25 +36,22 @@ open class SUNetworkService {
 // MARK: - SUNetworkServicing Implementation
 
 extension SUNetworkService: SUNetworkServicing {
-    /// Executes a network request and returns a decoded response.
-    ///
-    /// - Parameter request: The URLRequestable object.
-    /// - Returns: A Result containing either the decoded response or a SUNetworkError.
     public func execute<T: Decodable>(_ request: SUURLRequestable) async -> Result<T, SUNetworkError> {
-        var retries = 0
-        while true {
-            let result: Result<T, SUNetworkError> = await performRequest(request)
-            switch result {
-            case .success(let value):
-                return .success(value)
-            case .failure(let error):
-                if retries >= request.retryConfig.maxRetries || !request.retryConfig.shouldRetry(error) {
-                    return .failure(error)
+        await retryOperation(request: request) {
+            await self.performRequest(request)
+        }
+    }
+
+    public func execute<T: Decodable>(_ request: SUURLRequestable) -> AnyPublisher<T, SUNetworkError> {
+        Deferred {
+            Future { promise in
+                Task {
+                    let result: Result<T, SUNetworkError> = await self.execute(request)
+                    promise(result)
                 }
-                retries += 1
-                try? await Task.sleep(nanoseconds: UInt64(request.retryConfig.retryDelay * 1_000_000_000))
             }
         }
+        .eraseToAnyPublisher()
     }
 }
 
