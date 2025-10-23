@@ -18,8 +18,8 @@ open class SUSessionConfigurator: SUSessionConfigurable {
     /// - Returns: A configured URLSessionConfiguration instance.
     open func createConfiguration() -> URLSessionConfiguration {
         let configuration = URLSessionConfiguration.default
-        configuration.timeoutIntervalForRequest = 30.0
-        configuration.timeoutIntervalForResource = 30.0
+        configuration.timeoutIntervalForRequest = 15.0
+        configuration.timeoutIntervalForResource = 60.0
         return configuration
     }
 }

@@ -28,13 +28,11 @@ extension SUNetworkService {
             case .success:
                 return result
             case .failure(let error):
-                attempt += 1
-                
                 if !request.retryConfig.shouldRetry(error) {
                     return .failure(error)
                 }
                 
-                if attempt >= maxAttempts {
+                if attempt >= request.retryConfig.maxRetries {
                     return .failure(.maxRetriesExceeded(SUErrorContext(
                         message: "Max retries (\(request.retryConfig.maxRetries)) exceeded",
                         underlyingError: error
@@ -42,13 +40,16 @@ extension SUNetworkService {
                 }
                 
                 do {
-                    try await Task.sleep(nanoseconds: UInt64(request.retryConfig.retryDelay * 1_000_000_000))
+                    let delay = request.retryConfig.delay(for: attempt)
+                    try await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
                 } catch {
                     return .failure(.retryFailed(SUErrorContext(
                         message: "Retry operation interrupted",
                         underlyingError: error
                     )))
                 }
+                
+                attempt += 1
             }
         }
         
