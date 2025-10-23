@@ -40,7 +40,7 @@ class ViewController: UIViewController {
             case .success(let user):
                 print("✅ Success: \(user.title)")
             case .failure(let error):
-                print("❌ \(error)")
+                print("\(error.icon) \(error)")
             }
         }
     }
@@ -49,7 +49,7 @@ class ViewController: UIViewController {
         networkService.execute(req)
             .sink(receiveCompletion: { completion in
                 if case .failure(let error) = completion {
-                    print("❌ \(error)")
+                    print("\(error.icon) \(error)")
                 }
             }, receiveValue: { (user: User) in
                 print("✅ Success: \(user.title)")

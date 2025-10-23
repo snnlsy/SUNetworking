@@ -7,8 +7,6 @@
 
 import Foundation
 
-
-
 // MARK: - Error Handling
 
 /// Represents various network-related errors.
@@ -71,6 +69,10 @@ extension SUNetworkError: CustomStringConvertible {
         }
     }
     
+    public var icon: String {
+        "❌"
+    }
+
     private func format(_ type: String, _ context: SUErrorContext) -> String {
         if let statusCode = context.statusCode {
             return "\(type) [\(statusCode)]: \(context.message)"
