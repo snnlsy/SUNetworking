@@ -22,14 +22,42 @@ open class SUNetworkService {
     /// - Parameters:
     ///   - sessionConfigurator: The configurator for URLSessions.
     ///   - responseDecoder: The decoder for network responses.
+    ///   - headerConfiguration: Configuration for header management.
     public init(
         sessionConfigurator: SUSessionConfigurable = SUSessionConfigurator(),
-        responseDecoder: SUResponseDecoder = SUJSONResponseDecoder()
+        responseDecoder: SUResponseDecoder = SUJSONResponseDecoder(),
+        headerConfiguration: SUHeaderConfiguration = .default
     ) {
-        self.urlRequestFactory = SUURLRequestBuilder()
+        self.urlRequestFactory = SUURLRequestBuilder(
+            headerMerger: SUHeaderMerger(strategy: headerConfiguration.mergeStrategy),
+            headerInterceptors: headerConfiguration.interceptors,
+            headerProvider: headerConfiguration.provider,
+            validateHeaders: headerConfiguration.validateHeaders
+        )
         self.sessionConfigurator = sessionConfigurator
         self.responseDecoder = responseDecoder
         self.session = URLSession(configuration: sessionConfigurator.createConfiguration())
+    }
+    
+    /// Convenience initializer with header interceptors.
+    ///
+    /// - Parameters:
+    ///   - sessionConfigurator: The configurator for URLSessions.
+    ///   - responseDecoder: The decoder for network responses.
+    ///   - headerInterceptors: Array of header interceptors for dynamic header modification.
+    public convenience init(
+        sessionConfigurator: SUSessionConfigurable = SUSessionConfigurator(),
+        responseDecoder: SUResponseDecoder = SUJSONResponseDecoder(),
+        headerInterceptors: [SUHeaderInterceptor]
+    ) {
+        let configuration = SUHeaderConfiguration(
+            interceptors: headerInterceptors
+        )
+        self.init(
+            sessionConfigurator: sessionConfigurator,
+            responseDecoder: responseDecoder,
+            headerConfiguration: configuration
+        )
     }
 }
 
@@ -63,7 +91,7 @@ extension SUNetworkService {
     /// - Parameter request: The SUURLRequestable object.
     /// - Returns: A Result containing either the decoded response or a SUNetworkError.
     private func performRequest<T: Decodable>(_ request: SUURLRequestable) async -> Result<T, SUNetworkError> {
-        let urlRequestResult = urlRequestFactory.createRequest(from: request)
+        let urlRequestResult = await urlRequestFactory.createRequest(from: request)
         
         switch urlRequestResult {
         case .success(let urlRequest):

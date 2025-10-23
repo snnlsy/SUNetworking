@@ -15,5 +15,5 @@ public protocol SUURLRequestBuilding {
     ///
     /// - Parameter requestable: The SUURLRequestable object.
     /// - Returns: A Result containing either the URLRequest or a SUNetworkError.
-    func createRequest(from requestable: SUURLRequestable) -> Result<URLRequest, SUNetworkError>
+    func createRequest(from requestable: SUURLRequestable) async -> Result<URLRequest, SUNetworkError>
 }
