@@ -38,10 +38,9 @@ class ViewController: UIViewController {
             
             switch result {
             case .success(let user):
-                print("TASK: Request completed successfully")
-                print("TASK: Received response: \(user)")
+                print("✅ Success: \(user.title)")
             case .failure(let error):
-                print("TASK: Request failed with error: \(error)")
+                print("❌ \(error)")
             }
         }
     }
@@ -49,14 +48,11 @@ class ViewController: UIViewController {
     func runCombine() {
         networkService.execute(req)
             .sink(receiveCompletion: { completion in
-                switch completion {
-                case .finished:
-                    print("COMBINE: Request completed successfully")
-                case .failure(let error):
-                    print("COMBINE: Request failed with error: \(error)")
+                if case .failure(let error) = completion {
+                    print("❌ \(error)")
                 }
             }, receiveValue: { (user: User) in
-                print("COMBINE: Received response: \(user)")
+                print("✅ Success: \(user.title)")
             })
             .store(in: &cancellables)
     }

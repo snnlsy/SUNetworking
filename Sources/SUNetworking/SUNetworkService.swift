@@ -70,13 +70,8 @@ extension SUNetworkService {
             do {
                 let (data, response) = try await session.data(for: urlRequest)
                 guard let httpResponse = response as? HTTPURLResponse else {
-                    return .failure(.invalidResponse(SUErrorContext(
-                        userMessage: "Invalid server response",
-                        statusCode: nil,
-                        errorDescription: "The server response was not an HTTP response"
-                    )))
+                    return .failure(.invalidResponse(SUErrorContext(message: "Invalid HTTP response")))
                 }
-                
                 return handleResponse(data: data, httpResponse: httpResponse)
             } catch {
                 return .failure(.networkFailed(error))
@@ -98,21 +93,18 @@ extension SUNetworkService {
             return responseDecoder.decode(data)
         case 400...499:
             return .failure(.clientError(SUErrorContext(
-                userMessage: "Request failed",
-                statusCode: httpResponse.statusCode,
-                errorDescription: "The server returned a client error"
+                message: "Client error",
+                statusCode: httpResponse.statusCode
             )))
         case 500...599:
             return .failure(.serverError(SUErrorContext(
-                userMessage: "Server error occurred",
-                statusCode: httpResponse.statusCode,
-                errorDescription: "The server returned a server error"
+                message: "Server error",
+                statusCode: httpResponse.statusCode
             )))
         default:
             return .failure(.unexpectedError(SUErrorContext(
-                userMessage: "An unexpected error occurred",
-                statusCode: httpResponse.statusCode,
-                errorDescription: "Received an unexpected status code"
+                message: "Unexpected status code",
+                statusCode: httpResponse.statusCode
             )))
         }
     }

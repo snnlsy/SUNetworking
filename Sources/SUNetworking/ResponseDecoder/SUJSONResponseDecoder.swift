@@ -30,9 +30,7 @@ open class SUJSONResponseDecoder: SUResponseDecoder {
             return .success(decoded)
         } catch {
             return .failure(.parsingError(SUErrorContext(
-                userMessage: "Failed to parse server response",
-                statusCode: nil,
-                errorDescription: "Error occurred while parsing the response",
+                message: "Failed to decode response",
                 underlyingError: error
             )))
         }

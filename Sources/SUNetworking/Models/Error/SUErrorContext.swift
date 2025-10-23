@@ -11,41 +11,26 @@ import Foundation
 
 /// Provides context for network errors.
 public struct SUErrorContext {
-    /// User-friendly error message.
-    public let userMessage: String?
     /// HTTP status code associated with the error.
     public let statusCode: Int?
     /// Detailed description of the error.
-    public let errorDescription: String?
+    public let message: String
     /// Underlying system error, if any.
     public let underlyingError: Error?
-    
-    /// Creates a generic error context.
-    public static var generic: Self {
-        .init(
-            userMessage: "An unexpected error occurred. Please try again.",
-            statusCode: nil,
-            errorDescription: nil,
-            underlyingError: nil
-        )
-    }
     
     /// Initializes a new ErrorContext instance.
     ///
     /// - Parameters:
-    ///   - userMessage: User-friendly error message.
+    ///   - message: Error message.
     ///   - statusCode: HTTP status code.
-    ///   - errorDescription: Detailed error description.
     ///   - underlyingError: Underlying system error.
     public init(
-        userMessage: String?,
-        statusCode: Int?,
-        errorDescription: String?,
+        message: String,
+        statusCode: Int? = nil,
         underlyingError: Error? = nil
     ) {
-        self.userMessage = userMessage
+        self.message = message
         self.statusCode = statusCode
-        self.errorDescription = errorDescription
         self.underlyingError = underlyingError
     }
 }

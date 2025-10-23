@@ -57,11 +57,7 @@ open class SUURLRequestBuilder: SUURLRequestBuilding {
             return .success(request)
         }
         guard let url = request.url else {
-            return .failure(.invalidURL(SUErrorContext(
-                userMessage: "Invalid URL",
-                statusCode: nil,
-                errorDescription: "The URL provided was invalid"
-            )))
+            return .failure(.invalidURL(SUErrorContext(message: "Invalid URL")))
         }
         
         if var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false) {
@@ -73,9 +69,7 @@ open class SUURLRequestBuilder: SUURLRequestBuilding {
                 return .success(request)
             } catch {
                 return .failure(.serializationError(SUErrorContext(
-                    userMessage: "Failed to encode request parameters",
-                    statusCode: nil,
-                    errorDescription: "Error occurred during request serialization",
+                    message: "Failed to encode URL parameters",
                     underlyingError: error
                 )))
             }
@@ -98,9 +92,7 @@ open class SUURLRequestBuilder: SUURLRequestBuilding {
             return .success(request)
         } catch {
             return .failure(.serializationError(SUErrorContext(
-                userMessage: "Failed to encode request parameters",
-                statusCode: nil,
-                errorDescription: "Error occurred during request serialization",
+                message: "Failed to encode JSON parameters",
                 underlyingError: error
             )))
         }
