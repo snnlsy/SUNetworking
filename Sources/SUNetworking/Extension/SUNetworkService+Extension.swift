@@ -18,18 +18,23 @@ extension SUNetworkService {
         request: SUURLRequestable,
         operation: @escaping () async -> Result<T, SUNetworkError>
     ) async -> Result<T, SUNetworkError> {
-        var retries = 0
-        while retries <= request.retryConfig.maxRetries {
+        var attempt = 0
+        let maxAttempts = request.retryConfig.maxRetries + 1
+        
+        while attempt < maxAttempts {
             let result = await operation()
+            
             switch result {
             case .success:
                 return result
             case .failure(let error):
+                attempt += 1
+                
                 if !request.retryConfig.shouldRetry(error) {
                     return .failure(error)
                 }
-                retries += 1
-                if retries > request.retryConfig.maxRetries {
+                
+                if attempt >= maxAttempts {
                     return .failure(.maxRetriesExceeded(SUErrorContext(
                         userMessage: "The operation couldn't be completed after multiple attempts. Please try again later.",
                         statusCode: nil,
@@ -37,6 +42,7 @@ extension SUNetworkService {
                         underlyingError: error
                     )))
                 }
+                
                 do {
                     try await Task.sleep(nanoseconds: UInt64(request.retryConfig.retryDelay * 1_000_000_000))
                 } catch {
@@ -50,12 +56,7 @@ extension SUNetworkService {
             }
         }
         
-        return .failure(.unexpectedError(SUErrorContext(
-            userMessage: "An unexpected error occurred. Please try again.",
-            statusCode: nil,
-            errorDescription: "Unexpected flow in retry operation",
-            underlyingError: nil
-        )))
+        fatalError("Unreachable: retry loop should always return within the loop")
     }
 }
 
